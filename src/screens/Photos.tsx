@@ -58,6 +58,8 @@ export default function Photos({ initial, photos, onBack, onDone }: Props) {
       guessFood(c.photo!).then((g) => {
         setAi((now) => ({ ...now, [c.id]: g }))
         if (g) setCards((now) => now.map((x) => (x.id === c.id && !x.name ? { ...x, name: g.name, kcal: g.kcal } : x)))
+        // わからなかった写真は、今までどおり一覧から選んでもらう
+        else setEditing((cur) => cur ?? c.id)
       })
     }
   }
