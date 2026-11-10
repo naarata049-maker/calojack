@@ -4,6 +4,9 @@ import ramen from '../assets/photos/ramen.jpg'
 import donut from '../assets/photos/donut.jpg'
 import teriyaki from '../assets/photos/teriyaki.jpg'
 import toast from '../assets/photos/toast.jpg'
+import curry from '../assets/photos/curry.jpg'
+import gyudon from '../assets/photos/gyudon.jpg'
+import frappe from '../assets/photos/frappe.jpg'
 import type { Card } from './types'
 
 export const SAMPLE_FOODS: Card[] = [
@@ -11,4 +14,7 @@ export const SAMPLE_FOODS: Card[] = [
   { id: 's-donut', kind: 'food', name: 'ドーナツ', kcal: 300, photo: donut },
   { id: 's-teriyaki', kind: 'food', name: '鶏の照り焼き', kcal: 650, photo: teriyaki },
   { id: 's-toast', kind: 'food', name: 'トースト', kcal: 400, photo: toast },
+  { id: 's-curry', kind: 'food', name: 'カレー', kcal: 800, photo: curry },
+  { id: 's-gyudon', kind: 'food', name: '牛丼', kcal: 750, photo: gyudon },
+  { id: 's-frappe', kind: 'food', name: 'フラペチーノ', kcal: 380, photo: frappe },
 ]
