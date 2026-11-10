@@ -245,3 +245,44 @@
   font-size: 12px;
   color: var(--gray-1);
 }
+
+/* AIの予想 */
+.photos__thumb-name.is-ai {
+  background: var(--yellow);
+  animation: ai-blink 1.2s ease-in-out infinite;
+}
+@keyframes ai-blink { 50% { opacity: 0.55; } }
+.photos__ai {
+  display: inline-block;
+  margin-right: 3px;
+  padding: 0 3px;
+  border-radius: 4px;
+  background: var(--blue);
+  color: var(--white);
+  font-family: var(--font-pop);
+  font-size: 7px;
+  font-weight: 400;
+  line-height: 1.5;
+  vertical-align: 1px;
+}
+.photos__hint.is-ai { color: var(--blue); }
+.namesheet__ai {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px 10px 12px;
+  border-radius: 16px;
+}
+.namesheet__ai .photos__ai { font-size: 10px; padding: 1px 5px; }
+.namesheet__ai-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.namesheet__ai-text small {
+  display: block;
+  font-size: 11px;
+  color: var(--gray-1);
+}
+.namesheet__ai .btn { width: auto; flex: none; padding: 0 14px; }

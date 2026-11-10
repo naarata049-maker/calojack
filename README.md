@@ -16,3 +16,8 @@ npm run build    # docs/ に書き出す（GitHub Pages の main /docs で公開
 
 Vite + React + TypeScript。色と文字の決まりは `src/index.css` の `:root`（Figma「カロリーゲーム」ページの決定版から）。
 ゲームの進め方は `src/game/engine.ts`（部屋をつくった人のスマホが親になって進める）。
+
+## AIで写真のカロリーを予想する
+
+`VITE_AI_URL` を入れてビルドすると、写真を選んだときにAIが料理名とカロリーを予想して入れます（あとで直せます）。
+入れないときは今までどおり一覧から選びます。サーバーは `worker/`（くわしくは worker/README.md）。
