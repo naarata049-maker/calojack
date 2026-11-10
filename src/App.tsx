@@ -4,6 +4,8 @@ import Entry from './screens/Entry.tsx'
 import Lobby from './screens/Lobby.tsx'
 import Photos from './screens/Photos.tsx'
 import DeckReady from './screens/DeckReady.tsx'
+import Table from './screens/Table.tsx'
+import Final from './screens/Final.tsx'
 import CardSamples from './screens/CardSamples.tsx'
 import { GuestRoom, HostRoom, myPlayerId, type Room } from './net/room.ts'
 import { useRoom } from './net/useRoom.ts'
@@ -114,10 +116,6 @@ function InRoom({ room, online, onLeave, onError }: { room: Room; online: boolea
     return <Lobby room={room} state={state} online={online} onEditPhotos={() => setEditPhotos(true)} onLeave={onLeave} />
   }
   if (state.phase === 'deck') return <DeckReady room={room} state={state} photos={photos} />
-  return (
-    <main className="waiting">
-      <p className="pop">ラウンド {state.round}（つくり中）</p>
-      <button className="btn is-small" onClick={onLeave}>やめる</button>
-    </main>
-  )
+  if (state.phase !== 'final') return <Table room={room} state={state} photos={photos} />
+  return <Final room={room} state={state} photos={photos} onLeave={onLeave} />
 }
