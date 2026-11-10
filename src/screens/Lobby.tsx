@@ -125,7 +125,7 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
                   ＋
                 </button>
                 <span className="lobby__name label">{isHost && i === 0 ? 'CPUを入れる' : ''}</span>
-                <span className="lobby__status is-empty">あと{empty}人</span>
+                {i === 0 ? <span className="lobby__status is-empty">あと{empty}人</span> : <span className="lobby__status is-blank" />}
               </li>
             ))}
           </ul>
