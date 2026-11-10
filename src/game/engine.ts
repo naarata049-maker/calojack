@@ -3,7 +3,7 @@
 import { FOOD_PER_EXERCISE, HIDDEN_RATE, MAX_HAND, newId, randomExercise, shuffle, signedKcal } from './cards'
 import type { Action, Card, GameState, HandCard, Player, RoundResult, Settings } from './types'
 
-export const DEFAULT_SETTINGS: Settings = { target: 2300, rounds: 3, startChips: 10 }
+export const DEFAULT_SETTINGS: Settings = { target: 2250, rounds: 3, startChips: 10 }
 export const MAX_PLAYERS = 4
 export const MIN_PLAYERS = 2
 export const MAX_BET = 5

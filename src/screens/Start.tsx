@@ -19,7 +19,7 @@ export default function Start({ onCreate, onJoin, onSolo }: Props) {
 
       <div className="start__table sticker">
         <p className="start__rule">
-          目標の <b className="pop">2,300</b><small>kcal</small> に<br />いちばん近づけた人の勝ち！
+          目標の <b className="pop">2,250</b><small>kcal</small> に<br />いちばん近づけた人の勝ち！
         </p>
         <div className="start__signs">
           <span className="start__sign is-red pop">ごはん ＋</span>

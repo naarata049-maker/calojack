@@ -7,15 +7,19 @@ import type { GameState, Settings } from '../game/types.ts'
 import type { Room } from '../net/room.ts'
 import './Lobby.css'
 
-const TARGETS = [1800, 2000, 2300, 2650, 3000]
 const ROUNDS = [1, 2, 3, 4, 5]
 const CHIPS = [5, 10, 15, 20]
-// 目標のめやす（日本人の食事摂取基準 2020 の推定エネルギー必要量、18〜29歳）
+// 目標の数字は、厚生労働省「日本人の食事摂取基準（2025年版）」の
+// 推定エネルギー必要量（18〜29歳、身体活動レベル 低い／ふつう／高い）から
+const TARGETS = [1700, 1950, 2250, 2600, 3000]
 const TARGET_NOTES: Record<number, string> = {
-  2000: '20代女性・活動量ふつう',
-  2300: '20代男性・活動量が低め',
-  2650: '20代男性・活動量ふつう',
+  1700: '20代女性・活動量が低い',
+  1950: '20代女性・活動量ふつう',
+  2250: '20代男性・活動量が低い／20代女性・活動量が高い',
+  2600: '20代男性・活動量ふつう',
+  3000: '20代男性・活動量が高い',
 }
+const TARGET_SOURCE = '厚生労働省「日本人の食事摂取基準（2025年版）」推定エネルギー必要量（18〜29歳）'
 
 type Pick = 'target' | 'rounds' | 'startChips'
 
@@ -157,7 +161,7 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
         </div>
         {TARGET_NOTES[s.target] && (
           <p className="lobby__note">
-            <small>目標は</small>「{TARGET_NOTES[s.target]}」<small>の1日の目安</small>
+            <small>目標は</small>「{TARGET_NOTES[s.target].split('／')[0]}」<small>の1日の目安</small>
           </p>
         )}
       </div>
@@ -211,11 +215,18 @@ function PickSheet({ kind, value, onPick, onClose }: { kind: Pick; value: number
                   {v.toLocaleString()}
                   <small>{p.unit}</small>
                 </span>
-                {kind === 'target' && TARGET_NOTES[v] && <em>{TARGET_NOTES[v]}</em>}
+                {kind === 'target' && TARGET_NOTES[v] && (
+                  <em>
+                    {TARGET_NOTES[v].split('／').map((t) => (
+                      <span key={t}>{t}</span>
+                    ))}
+                  </em>
+                )}
               </button>
             </li>
           ))}
         </ul>
+        {kind === 'target' && <p className="picksheet__source">出典：{TARGET_SOURCE}</p>}
         <button className="picksheet__close" onClick={onClose}>
           とじる
         </button>
