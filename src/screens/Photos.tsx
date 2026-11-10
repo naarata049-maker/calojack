@@ -12,7 +12,9 @@ import { shrinkPhoto } from '../net/image.ts'
 import { photoUrl, type Photos as PhotoMap } from '../net/room.ts'
 import './Photos.css'
 
-const MAX_PHOTOS = 10
+const MAX_PHOTOS = 20
+/** 山札に入れるのに必要な最低の枚数 */
+const MIN_PHOTOS = 5
 
 type Props = {
   initial: CardData[]
@@ -86,7 +88,7 @@ export default function Photos({ initial, photos, onBack, onDone }: Props) {
     <main className="photos">
       <Header title="カードをつくる" onBack={() => onBack(cards)} />
       <div className="photos__body">
-        <p className="photos__lead label">山札に入れる写真を えらんでね</p>
+        <p className="photos__lead label">山札に入れる写真を 5枚以上 えらんでね（20枚まで）</p>
         <button className="photos__pick sticker pop" onClick={() => fileRef.current?.click()} disabled={cards.length >= MAX_PHOTOS}>
           <span className="photos__pick-icon" aria-hidden="true" />
           {loading ? '読みこみ中…' : '写真フォルダから選ぶ'}
@@ -104,7 +106,7 @@ export default function Photos({ initial, photos, onBack, onDone }: Props) {
         />
 
         <div className="photos__row">
-          <p className="label">選んだ写真（{cards.length}枚）</p>
+          <p className="label">選んだ写真（{cards.length}/{MAX_PHOTOS}枚）</p>
           {cards.length > 0 ? (
             <button className="photos__reset" onClick={() => setCards([])}>
               選びなおす ›
@@ -167,7 +169,9 @@ export default function Photos({ initial, photos, onBack, onDone }: Props) {
       </div>
 
       <div className="photos__foot">
-        {thinking > 0 ? (
+        {cards.length < MIN_PHOTOS ? (
+          <p className="photos__hint">あと{MIN_PHOTOS - cards.length}枚 えらんでね</p>
+        ) : thinking > 0 ? (
           <p className="photos__hint">AIが写真を見ています（あと{thinking}枚）</p>
         ) : unnamed.length > 0 ? (
           <p className="photos__hint">料理名がまだの写真が {unnamed.length}枚 あります</p>
@@ -176,7 +180,7 @@ export default function Photos({ initial, photos, onBack, onDone }: Props) {
             <p className="photos__hint is-ai">AIの予想は、写真をタップすると直せます</p>
           )
         )}
-        <button className="btn is-red" disabled={cards.length === 0 || unnamed.length > 0 || thinking > 0} onClick={() => onDone(cards)}>
+        <button className="btn is-red" disabled={cards.length < MIN_PHOTOS || unnamed.length > 0 || thinking > 0} onClick={() => onDone(cards)}>
           {cards.length}枚を山札に入れる！
         </button>
       </div>
