@@ -1,6 +1,7 @@
 // 01 友達を集める（Figma 417:2）
 import { useState } from 'react'
 import Header from '../components/Header.tsx'
+import Sheet from '../components/Sheet.tsx'
 import { MAX_PLAYERS, MIN_PLAYERS } from '../game/engine.ts'
 import type { GameState, Settings } from '../game/types.ts'
 import type { Room } from '../net/room.ts'
@@ -9,10 +10,14 @@ import './Lobby.css'
 const TARGETS = [1800, 2000, 2300, 2650, 3000]
 const ROUNDS = [1, 2, 3, 4, 5]
 const CHIPS = [5, 10, 15, 20]
-
-function next<T>(list: T[], now: T) {
-  return list[(list.indexOf(now) + 1) % list.length]
+// 目標のめやす（日本人の食事摂取基準 2020 の推定エネルギー必要量、18〜29歳）
+const TARGET_NOTES: Record<number, string> = {
+  2000: '20代女性・活動量ふつう',
+  2300: '20代男性・活動量が低め',
+  2650: '20代男性・活動量ふつう',
 }
+
+type Pick = 'target' | 'rounds' | 'startChips'
 
 type Props = {
   room: Room
@@ -25,6 +30,7 @@ type Props = {
 export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Props) {
   const isHost = room.isHost
   const [copied, setCopied] = useState(false)
+  const [picking, setPicking] = useState<Pick | null>(null)
   const me = state.players.find((p) => p.id === room.me)
   const allReady = state.players.every((p) => p.ready)
   const canStart = isHost && state.players.length >= MIN_PLAYERS && allReady
@@ -138,19 +144,19 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
 
         <p className="lobby__heading label">このゲームの設定</p>
         <div className="lobby__settings">
-          <Tile label="目標" onChange={isHost ? () => change({ target: next(TARGETS, s.target) }) : undefined}>
+          <Tile label="目標" onChange={isHost ? () => setPicking('target') : undefined}>
             {s.target.toLocaleString()}
             <small>kcal</small>
           </Tile>
-          <Tile label="ラウンド" big onChange={isHost ? () => change({ rounds: next(ROUNDS, s.rounds) }) : undefined}>
+          <Tile label="ラウンド" big onChange={isHost ? () => setPicking('rounds') : undefined}>
             {s.rounds}
           </Tile>
-          <Tile label="チップ" big onChange={isHost ? () => change({ startChips: next(CHIPS, s.startChips) }) : undefined}>
+          <Tile label="チップ" big onChange={isHost ? () => setPicking('startChips') : undefined}>
             {s.startChips}
             <small>枚</small>
           </Tile>
         </div>
-        <p className="lobby__note pop">目標は「20代男性・活動量が低めの1日の目安」から</p>
+        {TARGET_NOTES[s.target] && <p className="lobby__note pop">目標は「{TARGET_NOTES[s.target]}の1日の目安」から</p>}
       </div>
 
       <div className="lobby__foot">
@@ -165,7 +171,53 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
           </button>
         ) : null}
       </div>
+
+      {picking && (
+        <PickSheet
+          kind={picking}
+          value={s[picking]}
+          onPick={(v) => {
+            change({ [picking]: v })
+            setPicking(null)
+          }}
+          onClose={() => setPicking(null)}
+        />
+      )}
     </main>
+  )
+}
+
+const PICKS: Record<Pick, { title: string; sub: string; list: number[]; unit: string }> = {
+  target: { title: '目標', sub: 'この数字に一番近い人が勝ち。こえたら負けです', list: TARGETS, unit: 'kcal' },
+  rounds: { title: 'ラウンド', sub: '何回戦あそぶか', list: ROUNDS, unit: '回戦' },
+  startChips: { title: 'チップ', sub: 'はじめに配るチップの枚数', list: CHIPS, unit: '枚' },
+}
+
+function PickSheet({ kind, value, onPick, onClose }: { kind: Pick; value: number; onPick: (v: number) => void; onClose: () => void }) {
+  const p = PICKS[kind]
+  return (
+    <Sheet onClose={onClose}>
+      <div className="picksheet">
+        <p className="picksheet__title pop">{p.title}</p>
+        <p className="picksheet__sub">{p.sub}</p>
+        <ul className={`picksheet__list is-${kind}`}>
+          {p.list.map((v) => (
+            <li key={v}>
+              <button className={`picksheet__opt sticker ${v === value ? 'is-on' : ''}`} onClick={() => onPick(v)} aria-pressed={v === value}>
+                <span className="pop">
+                  {v.toLocaleString()}
+                  <small>{p.unit}</small>
+                </span>
+                {kind === 'target' && TARGET_NOTES[v] && <em>{TARGET_NOTES[v]}</em>}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button className="picksheet__close" onClick={onClose}>
+          とじる
+        </button>
+      </div>
+    </Sheet>
   )
 }
 
