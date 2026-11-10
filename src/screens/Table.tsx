@@ -1,6 +1,6 @@
 // 04 チップを賭ける・05 引くか、やめるか・06 めくって、ラウンドの結果（Figma 408:1514 / 408:1594 / 426:1977）
 // 上はラウンド・目標・自分のチップ、真ん中のミントのテーブルに相手・山札・自分の手札、下に操作
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import Card, { Deck, formatKcal } from '../components/Card.tsx'
 import Chip from '../components/Chip.tsx'
 import { MAX_HAND } from '../game/cards.ts'
@@ -115,13 +115,27 @@ function Opponent({ p, state }: { p: Player; state: GameState }) {
 
 /** 自分の手札。枚数で大きさと並べ方を変える（2枚は大きく、6枚以上は2段） */
 function Hand({ hand, opened, photos }: { hand: HandCard[]; opened: boolean; photos: Photos }) {
+  // 置ける場所の大きさを測って、はみ出さない一番大きい幅にする（スマホの高さが低くても1画面に収める）
+  const ref = useRef<HTMLDivElement>(null)
+  const [box, setBox] = useState({ w: 300, h: 260 })
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => setBox({ w: e.contentRect.width, h: e.contentRect.height }))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const n = hand.length
-  const width = opened ? (n <= 3 ? 84 : n <= 4 ? 70 : 64) : n <= 2 ? 104 : n <= 3 ? 76 : n <= 4 ? 72 : n <= 6 ? 64 : 56
-  const rows = n <= (opened ? 4 : 3) ? [hand] : [hand.slice(0, Math.ceil(n / 2)), hand.slice(Math.ceil(n / 2))]
+  const perRow = n <= (opened ? 4 : 3) ? n : Math.ceil(n / 2)
+  const rows = perRow === n ? [hand] : [hand.slice(0, perRow), hand.slice(perRow)]
+  const max = opened ? 90 : 108
+  const byW = (box.w - (perRow - 1) * 4 - 8) / perRow
+  const byH = ((box.h - (rows.length - 1) * 4) / rows.length - 10) * 0.72
+  const width = Math.max(44, Math.floor(Math.min(max, byW, byH)))
   const tilts = [6, -5, 4, -3, 5, -4, 3]
   let k = 0
   return (
-    <div className={`hand is-${rows.length}row`}>
+    <div ref={ref} className={`hand is-${rows.length}row`}>
       {rows.map((row, r) => (
         <div className="hand__row" key={r}>
           {row.map((c) => {

@@ -4,7 +4,7 @@
   flex: 1;
   min-height: 0;
   padding: 10px 16px 0;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 /* 上の3つの札 */
@@ -50,9 +50,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  flex: none;
-  height: 432px;
-  margin-top: 18px;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 432px;
+  margin-top: 14px;
   padding: 12px 12px 14px;
   border: var(--line-thick);
   border-radius: 28px;
@@ -160,8 +161,13 @@
 
 .table__deck {
   position: absolute;
-  right: 22px;
-  top: 88px;
+  right: 14px;
+  top: 50%;
+  translate: 0 -50%;
+}
+.table__deck img {
+  width: 58px;
+  height: auto;
 }
 .table__open {
   margin-top: 16px;
@@ -189,18 +195,11 @@
   justify-content: center;
   flex: 1;
   min-height: 0;
-  padding: 0 0 8px;
+  padding: 6px 0 8px;
 }
 .table.is-betting .hand,
 .table.is-playing .hand {
-  padding-top: 96px;
-}
-.table.is-betting .hand,
-.table.is-playing .hand {
-  padding-right: 64px;
-}
-.table.is-playing .hand.is-2row {
-  padding-top: 70px;
+  padding: 8px 74px 8px 0;
 }
 .hand.is-2row .hand__row + .hand__row {
   margin-top: 4px;
@@ -267,8 +266,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
-  padding: 26px 4px 24px;
+  flex: none;
+  padding: 16px 4px 16px;
 }
 .controls__title {
   margin: 0;
@@ -283,17 +282,17 @@
   line-height: 1.6;
 }
 .controls__main {
-  margin-top: auto;
+  margin-top: 4px;
 }
 
 .bet__chips {
   display: flex;
   gap: 14px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 .bet__chip {
-  width: 52px;
-  height: 52px;
+  width: 50px;
+  height: 50px;
   border: var(--line-thick);
   border-radius: 50%;
   background: var(--yellow);
@@ -311,14 +310,14 @@
   cursor: default;
 }
 .bet__note {
-  margin: 14px 0 6px;
+  margin: 10px 0 6px;
   font-weight: 700;
   font-size: 11px;
 }
 .bet__ranks {
   display: flex;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 .bet__rank {
   padding: 2px 16px;
@@ -335,7 +334,7 @@
   display: flex;
   gap: 18px;
   width: 100%;
-  margin: 18px 0 18px;
+  margin: 14px 0 14px;
 }
 .play__row > * {
   flex: 1;
@@ -393,7 +392,7 @@
 
 /* 06 ラウンドの結果 */
 .controls.is-result {
-  padding-top: 18px;
+  padding-top: 12px;
 }
 .result__title {
   margin: 0 0 10px;
@@ -402,9 +401,9 @@
 .result__list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  margin: 0 0 18px;
+  margin: 0 0 12px;
   padding: 0;
   list-style: none;
 }
@@ -412,7 +411,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 42px;
+  height: 40px;
   padding: 0 8px;
   border-radius: 14px;
 }
@@ -488,4 +487,27 @@
 }
 .table__pill.pop .label {
   font-family: var(--font-label);
+}
+
+/* 高さの低いスマホ（Safari のバーが出ているときなど） */
+@media (max-height: 720px) {
+  .table { padding-top: 8px; }
+  .table__pill { height: 30px; }
+  .table__felt { margin-top: 10px; padding: 10px 10px 10px; }
+  .opp { height: 50px; }
+  .opp__avatar { width: 28px; height: 28px; }
+  .table__sum { height: 38px; }
+  .table__sum-value { font-size: 20px; }
+  .controls { padding: 10px 4px 12px; }
+  .controls__title { font-size: 18px; }
+  .bet__chips { margin-top: 8px; }
+  .bet__chip { width: 44px; height: 44px; font-size: 18px; }
+  .bet__note { margin: 8px 0 4px; }
+  .bet__ranks { margin-bottom: 10px; }
+  .play__row { margin: 10px 0; }
+  .controls .btn { height: 52px; font-size: 18px; }
+  .result__row { height: 34px; }
+  .result__list { gap: 6px; }
+  .table__open { margin-top: 8px; }
+  .table__open-title { font-size: 20px; }
 }
