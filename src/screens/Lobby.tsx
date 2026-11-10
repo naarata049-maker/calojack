@@ -91,28 +91,27 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
               const mine = p.id === room.me
               return (
                 <li key={p.id} className="lobby__person">
-                  <button
-                    className="lobby__avatar"
-                    style={{ background: p.color }}
-                    onClick={mine ? onEditPhotos : undefined}
-                    disabled={!mine}
-                    aria-label={mine ? '写真をえらぶ' : p.name}
-                  >
-                    {p.isCpu && <span className="lobby__cpu pop">CPU</span>}
+                  {/* ×は押せないボタン（相手のアイコン）の中だと反応しないので、外に置く */}
+                  <span className="lobby__avatar-wrap">
+                    <button
+                      className="lobby__avatar"
+                      style={{ background: p.color }}
+                      onClick={mine ? onEditPhotos : undefined}
+                      disabled={!mine}
+                      aria-label={mine ? '写真をえらぶ' : p.name}
+                    >
+                      {p.isCpu && <span className="lobby__cpu pop">CPU</span>}
+                    </button>
                     {isHost && p.isCpu && (
-                      <span
+                      <button
                         className="lobby__remove"
-                        role="button"
-                        aria-label="外す"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          room.dispatch({ type: 'removePlayer', playerId: p.id })
-                        }}
+                        aria-label={`${p.name}を外す`}
+                        onClick={() => room.dispatch({ type: 'removePlayer', playerId: p.id })}
                       >
                         ×
-                      </span>
+                      </button>
                     )}
-                  </button>
+                  </span>
                   <span className="lobby__name label">{mine ? 'あなた' : p.name}</span>
                   <span className={`lobby__status ${p.ready ? 'is-ready' : ''} ${!p.connected ? 'is-off' : ''}`}>
                     {!p.connected ? '通信がとぎれた' : p.ready ? '準備OK' : '写真を選び中…'}

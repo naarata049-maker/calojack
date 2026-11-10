@@ -89,8 +89,15 @@
   color: var(--white);
   font-size: 12px;
 }
+.lobby__avatar-wrap {
+  position: relative;
+  display: block;
+}
 .lobby__remove {
   position: absolute;
+  z-index: 1;
+  padding: 0;
+  cursor: pointer;
   right: -6px;
   top: -6px;
   width: 22px;
@@ -320,4 +327,10 @@
   .lobby__note { margin-top: 6px; padding: 4px 12px; }
   .lobby__photos { margin-top: 4px; }
   .lobby__body { padding-bottom: 6px; }
+}
+/* ×は小さいので、指で押せる範囲を広げる */
+.lobby__remove::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
 }
