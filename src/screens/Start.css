@@ -76,3 +76,10 @@
   gap: 14px;
   margin-top: 24px;
 }
+
+.start__solo {
+  margin-top: 2px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--gray-1);
+}

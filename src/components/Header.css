@@ -1,0 +1,26 @@
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  flex: none;
+}
+.header__back {
+  position: absolute;
+  left: 20px;
+  top: 11px;
+  width: 42px;
+  height: 42px;
+  border: var(--line);
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  font-size: 22px;
+  line-height: 1;
+  padding-bottom: 3px;
+}
+.header__title {
+  margin: 0;
+  font-size: 18px;
+}

@@ -1,0 +1,107 @@
+.deckready {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 0 20px;
+  overflow-y: auto;
+}
+.deckready__title {
+  margin: 14px 0 0;
+  font-size: 22px;
+  text-align: center;
+}
+.deckready__sub {
+  margin: 6px 0 12px;
+  font-size: 10px;
+  color: var(--gray-1);
+  text-align: center;
+}
+.deckready__table {
+  position: relative;
+  flex: none;
+  height: 418px;
+  border: var(--line-thick);
+  border-radius: 24px;
+  background: var(--mint);
+  box-shadow: var(--shadow-big);
+  overflow: hidden;
+}
+.deckready__spot {
+  position: absolute;
+  animation: deal-in 0.5s both;
+}
+.deckready__spot:nth-child(2) { animation-delay: 0.05s; }
+.deckready__spot:nth-child(3) { animation-delay: 0.1s; }
+.deckready__spot:nth-child(4) { animation-delay: 0.15s; }
+.deckready__spot:nth-child(5) { animation-delay: 0.2s; }
+.deckready__spot:nth-child(6) { animation-delay: 0.25s; }
+.deckready__spot:nth-child(7) { animation-delay: 0.3s; }
+@keyframes deal-in {
+  from { transform: translate(var(--from-x, 0), 40px) scale(0.6); opacity: 0; }
+}
+.deckready__deck {
+  position: absolute;
+  left: 50%;
+  top: 140px;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.deckready__count {
+  margin: 14px 0 0;
+  font-size: 34px;
+  line-height: 1;
+}
+.deckready__count small {
+  font-size: 16px;
+}
+
+.deckready__list {
+  margin-top: 16px;
+  padding: 14px 16px 6px;
+  border-radius: 20px;
+}
+.deckready__list .label {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+.deckready__list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.deckready__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 31px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.deckready__list b {
+  margin-left: auto;
+  font-weight: 400;
+  font-size: 16px;
+}
+.deckready__list b small {
+  font-size: 10px;
+}
+.deckready__dot {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+.deckready__foot {
+  margin-top: auto;
+  padding: 16px 0 24px;
+}
+.deckready__wait {
+  margin: 0;
+  padding: 18px 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--gray-1);
+}

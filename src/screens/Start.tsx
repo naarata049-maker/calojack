@@ -5,9 +5,10 @@ import './Start.css'
 type Props = {
   onCreate: () => void
   onJoin: () => void
+  onSolo: () => void
 }
 
-export default function Start({ onCreate, onJoin }: Props) {
+export default function Start({ onCreate, onJoin, onSolo }: Props) {
   return (
     <main className="start">
       <div className="start__hero">
@@ -30,6 +31,7 @@ export default function Start({ onCreate, onJoin }: Props) {
       <div className="start__buttons">
         <button className="btn is-red" onClick={onCreate}>部屋をつくる</button>
         <button className="btn" onClick={onJoin}>招待コードで入る</button>
+        <button className="start__solo" onClick={onSolo}>ひとりで、コンピュータとあそぶ ›</button>
       </div>
     </main>
   )

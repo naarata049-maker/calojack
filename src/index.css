@@ -127,3 +127,18 @@ button {
 .btn.is-yellow { background: var(--yellow); }
 .btn.is-ink { background: #45455f; color: var(--white); }
 .btn.is-small { height: 32px; border-width: 2px; border-radius: 16px; box-shadow: var(--shadow); font-family: var(--font-body); font-weight: 700; font-size: 12px; }
+
+/* つないでいる間など */
+.waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+}
+.waiting .btn {
+  width: 160px;
+}

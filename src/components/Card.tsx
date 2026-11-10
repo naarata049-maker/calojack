@@ -8,6 +8,7 @@ import cycle from '../assets/exercise/cycle.svg'
 import muscle from '../assets/exercise/muscle.svg'
 import swim from '../assets/exercise/swim.svg'
 import deckBack from '../assets/deck.svg'
+import { photoUrl, type Photos } from '../net/room'
 import './Card.css'
 
 const ICONS: Record<ExerciseKind, string> = { walk, run, cycle, muscle, swim }
@@ -23,15 +24,18 @@ type Props = {
   /** 写真を入れる画面などで、まだカロリーを見せないとき */
   unknown?: boolean
   className?: string
+  /** 写真の置き場（オンラインで受け取った写真） */
+  photos?: Photos
 }
 
 export function formatKcal(n: number) {
   return Math.abs(n).toLocaleString('ja-JP')
 }
 
-export default function Card({ card, width = 72, tilt = 0, opened = false, unknown = false, className = '' }: Props) {
+export default function Card({ card, width = 72, tilt = 0, opened = false, unknown = false, className = '', photos = {} }: Props) {
   const hidden = 'hidden' in card && card.hidden
   const showNumber = !unknown && (!hidden || opened)
+  const src = photoUrl(card, photos)
   const sign = card.kind === 'food' ? '+' : '−'
   return (
     <div
@@ -41,7 +45,7 @@ export default function Card({ card, width = 72, tilt = 0, opened = false, unkno
       <div className="card__face">
         <div className="card__photo">
           {card.kind === 'food' ? (
-            card.photo ? <img src={card.photo} alt="" draggable={false} /> : <span className="card__nophoto" />
+            src ? <img src={src} alt="" draggable={false} /> : <span className="card__nophoto" />
           ) : (
             <img className="card__icon" src={ICONS[card.exercise ?? 'walk']} alt="" draggable={false} />
           )}
