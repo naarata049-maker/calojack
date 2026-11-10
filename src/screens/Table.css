@@ -565,3 +565,67 @@
   .controls.is-waiting { min-height: 160px; }
   .controls__last { margin-bottom: 2px; }
 }
+
+/* 相手のタブ（タップで手札を見る） */
+button.opp {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+button.opp:active {
+  translate: 0 1px;
+}
+.peek {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.peek__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.peek__who {
+  flex: 1;
+  min-width: 0;
+}
+.peek__name {
+  margin: 0;
+  font-size: 15px;
+}
+.peek__status {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-1);
+}
+.peek__hand {
+  display: flex;
+  height: 250px;
+  border: var(--line-thick);
+  border-radius: 20px;
+  background: var(--mint);
+}
+.table .peek__hand .hand {
+  padding: 8px;
+  flex: 1;
+}
+.peek__empty {
+  margin: auto;
+  font-weight: 700;
+  color: var(--gray-1);
+}
+.peek .table__sum {
+  position: static;
+  margin: 0;
+}
+.peek__note {
+  margin: -4px 0 0;
+  font-size: 11px;
+  text-align: center;
+  color: var(--gray-1);
+}
+@media (max-height: 720px) {
+  .peek__hand { height: 200px; }
+}

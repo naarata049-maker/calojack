@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import Card, { Deck, formatKcal } from '../components/Card.tsx'
 import Chip from '../components/Chip.tsx'
+import Sheet from '../components/Sheet.tsx'
 import { MAX_HAND } from '../game/cards.ts'
 import { RANK_MULTIPLIERS, canDouble, handTotal, maxBet, visibleTotal } from '../game/engine.ts'
 import type { GameState, HandCard, Player } from '../game/types.ts'
@@ -20,6 +21,9 @@ export default function Table({ room, state, photos }: Props) {
   const viewing = turnPlayer && turnPlayer.id !== me.id ? turnPlayer : me
   const shownTotal = opened ? handTotal(viewing.hand) : visibleTotal(viewing.hand)
   const hasHidden = !opened && viewing.hand.some((c) => c.hidden)
+  // 上の相手のタブをタップすると、その人の手札と合計を見られる
+  const [peekId, setPeekId] = useState<string | null>(null)
+  const peek = others.find((p) => p.id === peekId)
 
   return (
     <main className={`table is-${state.phase}`}>
@@ -39,7 +43,13 @@ export default function Table({ room, state, photos }: Props) {
       <section className="table__felt">
         <div className={`table__others is-${others.length}`}>
           {others.map((p) => (
-            <Opponent key={p.id} p={p} state={state} active={state.phase === 'playing' && state.turn === p.id} />
+            <Opponent
+              key={p.id}
+              p={p}
+              state={state}
+              active={state.phase === 'playing' && state.turn === p.id}
+              onOpen={() => setPeekId(p.id)}
+            />
           ))}
         </div>
 
@@ -86,11 +96,12 @@ export default function Table({ room, state, photos }: Props) {
           <PlayControls room={room} me={me} state={state} />
         ))}
       {state.phase === 'result' && <RoundResult room={room} state={state} />}
+      {peek && <PeekSheet p={peek} state={state} photos={photos} onClose={() => setPeekId(null)} />}
     </main>
   )
 }
 
-function Opponent({ p, state, active }: { p: Player; state: GameState; active: boolean }) {
+function Opponent({ p, state, active, onOpen }: { p: Player; state: GameState; active: boolean; onOpen: () => void }) {
   let status = '考え中…'
   let yellow = false
   if (state.phase === 'betting' && p.status === 'bet') {
@@ -107,7 +118,7 @@ function Opponent({ p, state, active }: { p: Player; state: GameState; active: b
     status = `${total < 0 ? '−' : ''}${formatKcal(total)}kcal`
   }
   return (
-    <div className={`opp sticker ${active ? 'is-active' : ''}`}>
+    <button type="button" className={`opp sticker ${active ? 'is-active' : ''}`} onClick={onOpen} aria-label={`${p.name}の手札を見る`}>
       <span className="opp__avatar" style={{ background: p.color }} />
       <div className="opp__info">
         <p className="opp__name label">
@@ -125,7 +136,64 @@ function Opponent({ p, state, active }: { p: Player; state: GameState; active: b
         <i />
         <b>{p.hand.length}</b>
       </span>
-    </div>
+    </button>
+  )
+}
+
+/** 相手の手札と合計を見るシート（見ているあいだも動きに合わせて変わる） */
+function PeekSheet({ p, state, photos, onClose }: { p: Player; state: GameState; photos: Photos; onClose: () => void }) {
+  const opened = state.phase === 'result'
+  const total = opened ? handTotal(p.hand) : visibleTotal(p.hand)
+  const hidden = opened ? 0 : p.hand.filter((c) => c.hidden).length
+  let status = ''
+  if (state.phase === 'betting') status = p.status === 'bet' ? `${p.bet}枚 賭けた` : '賭けるチップを考え中'
+  else if (state.phase === 'playing') {
+    if (state.turn === p.id) status = '選択中…'
+    else if (p.status === 'stood') status = p.doubled ? 'ダブルダウンした' : 'やめた'
+    else status = '順番待ち'
+  } else if (opened) status = 'オープン！'
+  return (
+    <Sheet onClose={onClose}>
+      <div className="peek">
+        <div className="peek__head">
+          <span className="opp__avatar" style={{ background: p.color }} />
+          <div className="peek__who">
+            <p className="peek__name label">{p.name}の手札</p>
+            <p className="peek__status">
+              {p.hand.length}枚{status && ` ・ ${status}`}
+            </p>
+          </div>
+          <span className="table__pill is-chips pop">
+            <Chip size={18} /> {p.chips}
+          </span>
+        </div>
+        <div className="peek__hand">
+          {p.hand.length > 0 ? (
+            <Hand key={p.id} hand={p.hand} opened={opened} photos={photos} />
+          ) : (
+            <p className="peek__empty">まだカードがありません</p>
+          )}
+        </div>
+        <div className="table__sum sticker">
+          <span className="table__sum-label">{opened ? '合計' : '見えている合計'}</span>
+          <span className={`table__sum-value pop ${total < 0 ? 'is-minus' : ''}`}>
+            {total < 0 ? '−' : ''}
+            {formatKcal(total)}
+            <small>kcal</small>
+            {hidden > 0 && <span className="table__sum-q">＋？</span>}
+          </span>
+          {p.bet > 0 && (
+            <span className="table__sum-bet pop">
+              <Chip size={20} /> {p.bet}
+            </span>
+          )}
+        </div>
+        {hidden > 0 && <p className="peek__note">ハテナ{hidden}枚は、オープンまでわかりません</p>}
+        <button className="btn is-ink is-small" onClick={onClose}>
+          とじる
+        </button>
+      </div>
+    </Sheet>
   )
 }
 
