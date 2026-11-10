@@ -1,6 +1,7 @@
 // 04 チップを賭ける・05 引くか、やめるか・06 めくって、ラウンドの結果（Figma 408:1514 / 408:1594 / 426:1977）
 // 上はラウンド・目標・自分のチップ、真ん中のミントのテーブルに相手・山札・自分の手札、下に操作
 import { useLayoutEffect, useRef, useState } from 'react'
+import Coach, { type CoachStep } from '../components/Coach.tsx'
 import Card, { Deck, formatKcal } from '../components/Card.tsx'
 import Chip from '../components/Chip.tsx'
 import Sheet from '../components/Sheet.tsx'
@@ -24,9 +25,17 @@ export default function Table({ room, state, photos }: Props) {
   // 上の相手のタブをタップすると、その人の手札と合計を見られる
   const [peekId, setPeekId] = useState<string | null>(null)
   const peek = others.find((p) => p.id === peekId)
+  // 初めての1回だけ出る吹き出し（賭けるときに2つ、はじめての自分のターンに2つ）
+  const tips =
+    state.phase === 'betting' && me.status === 'betting'
+      ? betTips()
+      : state.phase === 'playing' && state.turn === me.id && me.status === 'playing'
+        ? turnTips(state.settings.target)
+        : null
 
   return (
     <main className={`table is-${state.phase}`}>
+      {tips && <Coach key={tips[0].key} steps={tips} />}
       <div className="table__top">
         <span className="table__pill">
           ラウンド {state.round}/{state.settings.rounds}
@@ -388,4 +397,23 @@ function RoundResult({ room, state }: { room: Room; state: GameState }) {
       )}
     </div>
   )
+}
+
+function betTips(): CoachStep[] {
+  return [
+    { key: 'bet', text: '最初にチップを賭ける。目標にいちばん近いと増えて、遠ければ減るよ。', targets: ['.bet__chips', '.bet__ranks'], place: 'above' },
+    { key: 'peek', text: '対戦相手の名前をタップすると対戦相手のカードとチップの枚数が分かるよ。', targets: ['.table__others'], place: 'below' },
+  ]
+}
+
+function turnTips(target: number): CoachStep[] {
+  return [
+    {
+      key: 'sum',
+      text: `これが今の合計。目標の${target.toLocaleString()} kcalに近づけよう。こえたらアウト！　「？」のカードは最後まで分からないから予想しよう！`,
+      targets: ['.table__felt > .table__sum'],
+      place: 'above',
+    },
+    { key: 'turn', text: 'もう1枚引くか、やめるかを選ぼう。全員がやめたら、「？」が全員分一斉にわかるよ。', targets: ['.play__row', '.controls__main'], place: 'above' },
+  ]
 }

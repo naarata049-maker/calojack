@@ -1,0 +1,279 @@
+/* あそびかた（Figma A案2 A2-1〜A2-3） */
+.howto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 0 20px 24px;
+  overflow-y: auto;
+}
+.howto__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  flex: none;
+  margin: 0 -20px;
+}
+.howto__title {
+  margin: 0;
+  font-size: 18px;
+}
+.howto__close {
+  position: absolute;
+  right: 20px;
+  top: 11px;
+  width: 42px;
+  height: 42px;
+  border: var(--line);
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  font-size: 20px;
+  line-height: 1;
+}
+.howto__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.howto__dots span {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 5px;
+  background: var(--white);
+}
+.howto__dots span.is-on {
+  width: 28px;
+  background: var(--red);
+}
+.howto__step {
+  align-self: center;
+  margin: 12px 0 0;
+  padding: 4px 12px;
+  border: var(--line);
+  border-radius: 13px;
+  background: var(--white);
+  box-shadow: 1px 2px 0 var(--ink);
+  font-size: 12px;
+}
+.howto__art {
+  flex: none;
+  margin-top: 12px;
+  padding: 16px 14px;
+  border-radius: 24px;
+  background: var(--mint);
+  min-height: 330px;
+}
+.howto__heading {
+  margin: 22px 0 0;
+  font-size: 24px;
+  line-height: 1.5;
+  text-align: center;
+}
+.howto__body {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.75;
+  text-align: center;
+}
+.howto__body .is-red { color: var(--red); }
+.howto__body .is-blue { color: var(--blue); }
+.howto__body .is-green { color: #1f8a5b; }
+.howto__foot {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+/* 絵の中の札 */
+.howto__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  align-self: center;
+  margin: 0;
+  height: 32px;
+  padding: 0 14px;
+  border: var(--line);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 1px 2px 0 var(--ink);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.howto__pill.is-small { height: 26px; padding: 0 10px; font-size: 11px; }
+.howto__pill.is-yellow { background: var(--yellow); }
+.howto__pill.is-red { background: var(--red); color: var(--white); }
+.howto__pill.is-red-text { color: var(--red); }
+.howto__pill.is-blue-text { color: var(--blue); }
+.howto__pill small { font-size: 0.6em; }
+
+/* ① ゴール */
+.art-goal { display: flex; flex-direction: column; }
+.art-goal > .howto__pill { height: 44px; font-size: 18px; padding: 0 18px; }
+.art-goal__line {
+  position: relative;
+  height: 120px;
+  margin: 4px 10px 0;
+}
+.art-goal__who {
+  position: absolute;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+.art-goal__who small { font-size: 9px; }
+.art-goal__who i {
+  width: 28px;
+  height: 28px;
+  border: var(--line);
+  border-radius: 50%;
+}
+.art-goal__who::after {
+  content: '';
+  width: 2px;
+  height: 26px;
+  background: var(--ink);
+}
+.art-goal__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 82px;
+  height: 14px;
+  border: var(--line);
+  border-radius: 7px;
+  background: var(--white);
+  overflow: hidden;
+}
+.art-goal__over {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: #ffdcd4;
+  border-left: var(--line);
+}
+.art-goal__target {
+  position: absolute;
+  top: 66px;
+  width: 4px;
+  height: 46px;
+  margin-left: -2px;
+  background: var(--ink);
+}
+.art-goal__out {
+  position: absolute;
+  top: 100px;
+  margin-left: 4px;
+  color: var(--red);
+  font-size: 9px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* 順位の表（①と③） */
+.art-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.art-rows__row {
+  display: grid;
+  grid-template-columns: 58px 52px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 19px;
+  box-shadow: 1px 2px 0 var(--ink);
+  font-size: 13px;
+}
+.art-win .art-rows__row { grid-template-columns: 58px 52px 1fr; height: 34px; }
+.art-rows__row .label { font-size: 12px; }
+.art-rows__row small { font-size: 11px; font-weight: 700; color: #555; }
+.art-rows__row.is-up { background: #d9f5e7; }
+.art-rows__row.is-down { background: #ffdcd4; }
+.art-rows__row.is-down b,
+.art-rows__row.is-down small { color: var(--red); }
+
+/* ② 手順 */
+.art-draw { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.art-draw__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+}
+.art-draw__deck {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+  width: 70px;
+  padding-top: 6px;
+}
+.art-draw__ripple {
+  position: absolute;
+  left: 50%;
+  top: 46px;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border: 3px solid rgb(255 255 255 / 0.7);
+  border-radius: 50%;
+  animation: howto-ripple 1.8s ease-out infinite;
+}
+.art-draw__ripple.is-2 { animation-delay: 0.9s; }
+@keyframes howto-ripple {
+  from { transform: scale(0.8); opacity: 1; }
+  to { transform: scale(1.5); opacity: 0; }
+}
+.art-draw__hand {
+  position: absolute;
+  left: 34px;
+  top: 52px;
+}
+.art-draw__arrow { align-self: center; margin-top: -28px; font-size: 16px; }
+.art-draw__top .card { flex: none; margin-top: 6px; }
+.art-draw__legend { display: flex; gap: 6px; }
+.art-draw__think { margin: 0; font-size: 12px; }
+.art-draw__buttons { display: flex; gap: 10px; }
+.art-draw__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  padding: 0 20px;
+  border: var(--line);
+  border-radius: 23px;
+  background: var(--white);
+  box-shadow: 1px 3px 0 var(--ink);
+  font-size: 15px;
+}
+.art-draw__btn.is-yellow { background: var(--yellow); }
+
+/* ③ 勝ち方 */
+.art-win { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.art-win > .howto__pill { margin-top: 14px; }
+.art-win > .howto__pill:first-child { margin-top: 0; }
+.art-win__rounds {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 13px;
+}

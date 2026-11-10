@@ -1,0 +1,54 @@
+/* 初めての1回だけ出る吹き出し（Figma C-1〜C-4） */
+.coach {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+}
+.coach__ring {
+  position: absolute;
+  border: 4px dashed var(--yellow);
+  border-radius: 18px;
+  pointer-events: none;
+}
+.coach__arrow {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--ink);
+  transform: rotate(45deg);
+}
+.coach__bubble {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--ink);
+  color: var(--white);
+}
+.coach__text {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.coach__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.coach__never {
+  padding: 4px 0;
+  color: #b9b9cc;
+  font-size: 10px;
+  font-weight: 700;
+}
+.coach__ok {
+  height: 28px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 12px;
+}

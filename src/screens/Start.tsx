@@ -1,5 +1,7 @@
 // はじめの画面（Figmaの決定版には無いので仮。ロゴ＋部屋をつくる／コードで入る）
+import { useState } from 'react'
 import { LogoMark } from '../components/Logo.tsx'
+import HowTo from './HowTo.tsx'
 import './Start.css'
 
 type Props = {
@@ -9,8 +11,13 @@ type Props = {
 }
 
 export default function Start({ onCreate, onJoin, onSolo }: Props) {
+  const [howto, setHowto] = useState(false)
+  if (howto) return <HowTo onClose={() => setHowto(false)} />
   return (
     <main className="start">
+      <button className="start__howto label" onClick={() => setHowto(true)}>
+        ？ あそびかた
+      </button>
       <div className="start__hero">
         <LogoMark size={150} />
         <h1 className="start__name pop">Calojack</h1>
