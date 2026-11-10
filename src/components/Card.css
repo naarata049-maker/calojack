@@ -1,0 +1,133 @@
+/* 1u = 基準 72×100 のときの 1px */
+.card {
+  --u: 1px;
+  position: relative;
+  width: calc(72 * var(--u));
+  height: calc(100 * var(--u));
+  flex: none;
+}
+
+/* 下の紺の影（右に3、下に4ずらす） */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  translate: calc(3 * var(--u)) calc(4 * var(--u));
+  border-radius: calc(10 * var(--u));
+  background: var(--ink);
+}
+
+.card__face {
+  position: absolute;
+  inset: 0;
+  border: calc(2 * var(--u)) solid var(--ink);
+  border-radius: calc(10 * var(--u));
+  background: #fff6e8;
+  text-align: center;
+  overflow: visible;
+}
+.card.is-exercise .card__face {
+  background: #eef6ff;
+}
+
+/* 写真はシール風に少し傾ける */
+.card__photo {
+  position: absolute;
+  left: calc(7 * var(--u));
+  top: calc(9 * var(--u));
+  width: calc(52 * var(--u));
+  height: calc(46 * var(--u));
+  padding: calc(4 * var(--u));
+  border: calc(1.5 * var(--u)) solid var(--ink);
+  border-radius: calc(4 * var(--u));
+  background: var(--white);
+  rotate: -5deg;
+}
+.card__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(3 * var(--u));
+  object-fit: cover;
+}
+.card__photo .card__icon {
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
+  margin: calc(1 * var(--u)) auto 0;
+  object-fit: contain;
+}
+.card__nophoto {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(3 * var(--u));
+  background: #d9d9d9;
+}
+
+.card__name {
+  position: absolute;
+  left: calc(2 * var(--u));
+  right: calc(2 * var(--u));
+  top: calc(60 * var(--u));
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: calc(6 * var(--u));
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card__kcal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(72 * var(--u));
+  margin: 0;
+  font-family: var(--font-pop);
+  font-size: calc(13 * var(--u));
+  line-height: 1.3;
+  color: var(--red);
+  white-space: nowrap;
+}
+.card.is-exercise .card__kcal {
+  color: var(--blue);
+}
+.card__kcal small {
+  font-size: calc(6.5 * var(--u));
+}
+
+/* ハテナ（黄色の？）・めくった後（オレンジの！） */
+.card__badge {
+  position: absolute;
+  right: calc(-2 * var(--u));
+  top: calc(-4 * var(--u));
+  display: grid;
+  place-items: center;
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+  border: calc(1.5 * var(--u)) solid var(--ink);
+  border-radius: 50%;
+  background: var(--yellow);
+  font-family: var(--font-pop);
+  font-size: calc(11 * var(--u));
+  line-height: 1;
+  rotate: -6deg;
+}
+.card__badge.is-open {
+  background: #ffa23f;
+}
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.deck img {
+  display: block;
+}
+.deck__count {
+  margin: 0;
+  font-size: 9px;
+}
