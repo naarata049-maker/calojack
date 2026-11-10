@@ -347,3 +347,18 @@
 .picksheet__opt em span {
   white-space: nowrap;
 }
+
+.lobby__note-who {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+@media (max-height: 640px) {
+  .lobby__tile { height: 62px; padding-top: 4px; }
+  .lobby__tile-value { height: 28px; line-height: 28px; }
+  .lobby__note { font-size: 11px; padding: 3px 12px; }
+  .lobby__note-who { line-height: 1.25; }
+  .lobby__heading { margin: 6px 0 4px; }
+}

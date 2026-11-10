@@ -161,7 +161,13 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
         </div>
         {TARGET_NOTES[s.target] && (
           <p className="lobby__note">
-            <small>目標は</small>「{TARGET_NOTES[s.target].split('／')[0]}」<small>の1日の目安</small>
+            <small>目標は</small>
+            <span className="lobby__note-who">
+              {TARGET_NOTES[s.target].split('／').map((t) => (
+                <span key={t}>「{t}」</span>
+              ))}
+            </span>
+            <small>の1日の目安</small>
           </p>
         )}
       </div>
