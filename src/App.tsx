@@ -83,7 +83,8 @@ function InRoom({ room, online, onLeave, onError }: { room: Room; online: boolea
 
   // 部屋に入ったら、まず写真を選ぶ（まだなら）
   useEffect(() => {
-    if (state?.phase === 'lobby' && me && !me.ready && me.photos.length === 0) setEditPhotos(true)
+    // 部屋をつくった人（オンライン）は、先に招待コードを見せて友達を呼べるようにする。写真はロビーから選ぶ
+    if (state?.phase === 'lobby' && me && !me.ready && me.photos.length === 0 && !(online && room.isHost)) setEditPhotos(true)
   }, [state?.phase, me?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

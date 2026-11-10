@@ -61,7 +61,8 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
   }
 
   let hint = ''
-  if (isHost) {
+  if (!me?.ready) hint = online && isHost ? '招待コードを送ったら、自分の写真を選んでね' : '山札に入れる写真を選んでね'
+  else if (isHost) {
     if (state.players.length < MIN_PLAYERS) hint = online ? '友達かコンピュータを入れてね' : 'コンピュータを入れてね'
     else if (!allReady) hint = '全員が写真を選ぶのを待っています'
   } else hint = '部屋をつくった人が始めるのを待っています'
@@ -174,13 +175,13 @@ export default function Lobby({ room, state, online, onEditPhotos, onLeave }: Pr
 
       <div className="lobby__foot">
         {hint && <p className="lobby__hint">{hint}</p>}
-        {isHost ? (
-          <button className="btn is-red" disabled={!canStart} onClick={() => room.dispatch({ type: 'start' })}>
-            はじめる！
-          </button>
-        ) : !me?.ready ? (
+        {!me?.ready ? (
           <button className="btn is-red" onClick={onEditPhotos}>
             写真をえらぶ
+          </button>
+        ) : isHost ? (
+          <button className="btn is-red" disabled={!canStart} onClick={() => room.dispatch({ type: 'start' })}>
+            はじめる！
           </button>
         ) : null}
       </div>
