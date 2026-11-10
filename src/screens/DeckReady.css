@@ -4,7 +4,7 @@
   flex: 1;
   min-height: 0;
   padding: 0 20px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .deckready__title {
   margin: 14px 0 0;
@@ -19,13 +19,22 @@
 }
 .deckready__table {
   position: relative;
-  flex: none;
-  height: 418px;
+  flex: 1 1 auto;
+  min-height: 150px;
+  max-height: 418px;
   border: var(--line-thick);
   border-radius: 24px;
   background: var(--mint);
   box-shadow: var(--shadow-big);
   overflow: hidden;
+}
+.deckready__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 353px;
+  height: 418px;
+  transform-origin: center;
 }
 .deckready__spot {
   position: absolute;
@@ -104,4 +113,12 @@
   text-align: center;
   font-weight: 700;
   color: var(--gray-1);
+}
+
+@media (max-height: 720px) {
+  .deckready__title { margin-top: 8px; font-size: 20px; }
+  .deckready__sub { margin: 4px 0 8px; }
+  .deckready__list { margin-top: 10px; padding: 10px 14px 4px; }
+  .deckready__list li { height: 26px; }
+  .deckready__foot { padding: 10px 0 14px; }
 }

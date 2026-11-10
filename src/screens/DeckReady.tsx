@@ -1,4 +1,5 @@
 // 03 山札が完成（Figma 417:119）
+import { useEffect, useRef, useState } from 'react'
 import Card, { Deck } from '../components/Card.tsx'
 import type { GameState } from '../game/types.ts'
 import type { Photos, Room } from '../net/room.ts'
@@ -33,11 +34,25 @@ export default function DeckReady({ room, state, photos }: { room: Room; state: 
     return state.players.find((x) => x.id === owner)?.color ?? 'var(--ink)'
   }
 
+  // テーブルは空いている高さに合わせて縮める（中身は 353×418 の舞台を拡大縮小）
+  const tableRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+  useEffect(() => {
+    const el = tableRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => {
+      setScale(Math.min(el.clientWidth / 353, el.clientHeight / 418, 1.2))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <main className="deckready">
       <h1 className="deckready__title pop">山札が完成！</h1>
       <p className="deckready__sub pop">みんなの写真と運動カードをまぜたよ</p>
-      <div className="deckready__table">
+      <div className="deckready__table" ref={tableRef}>
+        <div className="deckready__stage" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
         {shown.map((c, i) => (
           <div key={c.id} className="deckready__spot" style={{ left: SPOTS[i].x, top: SPOTS[i].y }}>
             <Card card={c} unknown width={72} tilt={SPOTS[i].r} photos={photos} />
@@ -49,6 +64,7 @@ export default function DeckReady({ room, state, photos }: { room: Room; state: 
             {state.deck.length}
             <small>枚</small>
           </p>
+        </div>
         </div>
       </div>
 
