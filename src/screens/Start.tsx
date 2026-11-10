@@ -35,6 +35,7 @@ export default function Start({ onCreate, onJoin, onSolo }: Props) {
         </div>
       </div>
 
+      <div className="start__gap" />
       <div className="start__buttons">
         <button className="btn is-red" onClick={onCreate}>部屋をつくる</button>
         <button className="btn" onClick={onJoin}>招待コードで入る</button>

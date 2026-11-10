@@ -11,7 +11,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: auto;
+}
+/* 上の空きと、緑の枠とボタンの間の空きを 2：1 に（ロゴと緑の枠を少し下へ） */
+.start::before {
+  content: '';
+  flex: 2 1 0;
+}
+.start__gap {
+  flex: 1 1 0;
+  min-height: 24px;
 }
 
 .start__name {
@@ -28,7 +36,7 @@
 }
 
 .start__table {
-  margin: 28px 0 auto;
+  margin: 28px 0 0;
   padding: 18px 16px 16px;
   border-radius: 24px;
   border-width: 2.5px;
@@ -75,7 +83,6 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-top: 24px;
 }
 
 .start__solo {

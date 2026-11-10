@@ -1,6 +1,6 @@
 // あそびかた（Figma「A案2」A2-1〜A2-3）：はじめの画面の右上「？ あそびかた」から開く
 // ① ゴール → ② 手順 → ③ 勝ち方 の3枚。左右にスワイプでも進める
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import Card, { Deck } from '../components/Card.tsx'
 import { SAMPLE_FOODS } from '../game/samples.ts'
 import type { Card as CardData, HandCard } from '../game/types.ts'
@@ -112,7 +112,7 @@ export default function HowTo({ onClose }: { onClose: () => void }) {
       </div>
       <p className="howto__step label">{page.step}</p>
 
-      <div className="howto__art sticker">{page.art}</div>
+      <FitArt>{page.art}</FitArt>
 
       <h2 className="howto__heading pop">{page.title}</h2>
       <p className="howto__body">{page.body}</p>
@@ -123,6 +123,33 @@ export default function HowTo({ onClose }: { onClose: () => void }) {
         </button>
       </div>
     </main>
+  )
+}
+
+/** 絵を、画面に残った高さにおさまるように縮める（スクロールさせない） */
+function FitArt({ children }: { children: React.ReactNode }) {
+  const outer = useRef<HTMLDivElement>(null)
+  const inner = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+  useLayoutEffect(() => {
+    const o = outer.current
+    const n = inner.current
+    if (!o || !n) return
+    const fit = () => {
+      const s = Math.min(1, o.clientHeight / n.offsetHeight, o.clientWidth / n.offsetWidth)
+      setScale(s > 0 ? s : 1)
+    }
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(o)
+    return () => ro.disconnect()
+  }, [children])
+  return (
+    <div ref={outer} className="howto__fit">
+      <div ref={inner} className="howto__art sticker" style={{ transform: `scale(${scale})` }}>
+        {children}
+      </div>
+    </div>
   )
 }
 
