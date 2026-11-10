@@ -1,0 +1,9 @@
+.logo-wide {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+}
+.logo-wide__name {
+  font-family: var(--font-pop);
+  line-height: 1;
+}

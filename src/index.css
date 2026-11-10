@@ -1,0 +1,129 @@
+/* Calojack の共通ルール（Figma ページ「カロリーゲーム」353:2 決定版、ロゴ 453:2 P2 から） */
+:root {
+  /* 色（ゲーム画面 D案・ステッカー風） */
+  --ink: #23233f;        /* 文字・線・ずらした影 */
+  --bg: #fff9ef;         /* 画面の背景（生成り） */
+  --cream: #fff3df;      /* カードの地 */
+  --mint: #9eddc0;       /* テーブル */
+  --mint-soft: #d8f3e4;  /* 準備OK などの札 */
+  --red: #ff5b3a;        /* 主ボタン・食事の＋ */
+  --yellow: #ffd23f;     /* チップ・ハテナ・やめる */
+  --blue: #2f8cff;       /* 運動の− */
+  --white: #ffffff;
+  --gray-1: #666666;     /* ラベル */
+  --gray-2: #777777;     /* 注釈 */
+  --gray-3: #999999;     /* 「› 変更」など */
+
+  /* 文字 */
+  --font-pop: 'Dela Gothic One', sans-serif;  /* 見出し・数字・ボタン */
+  --font-label: 'Mochiy Pop One', sans-serif; /* ラベル・名前 */
+  --font-body: 'Zen Kaku Gothic New', system-ui, sans-serif; /* 小さい説明 */
+
+  /* 太い線とずらした影（Figma は下の紺の図形を 1px 右・3〜4px 下にずらしている） */
+  --line: 2px solid var(--ink);
+  --line-thick: 2.5px solid var(--ink);
+  --shadow: 1px 3px 0 var(--ink);
+  --shadow-big: 1px 4px 0 var(--ink);
+
+  /* 大きさ */
+  --app-width: 393px;
+  --status-bar: env(safe-area-inset-top, 0px);
+  --home-indicator: env(safe-area-inset-bottom, 0px);
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: #f3e9d6;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* スマホ幅の枠。PC で開いたときは真ん中に 393×852 で表示する */
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--app-width);
+  height: 100%;
+  margin: 0 auto;
+  background: var(--bg);
+  overflow: hidden;
+  padding-top: var(--status-bar);
+  padding-bottom: var(--home-indicator);
+}
+
+@media (min-width: 500px) {
+  .app {
+    height: min(852px, 100% - 32px);
+    margin-top: 16px;
+    border-radius: 32px;
+    box-shadow: 0 8px 40px rgba(35, 35, 63, 0.18);
+    --status-bar: 40px;
+    --home-indicator: 20px;
+  }
+}
+
+/* 文字 */
+.pop { font-family: var(--font-pop); font-weight: 400; }
+.label { font-family: var(--font-label); font-weight: 400; }
+
+/* 太い線＋ずらした影の箱（カード・ボタン共通） */
+.sticker {
+  border: var(--line);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+/* ボタン */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 60px;
+  border: var(--line-thick);
+  border-radius: 30px;
+  box-shadow: var(--shadow-big);
+  font-family: var(--font-pop);
+  font-size: 20px;
+  background: var(--white);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn:active {
+  transform: translate(1px, 3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.btn.is-red { background: var(--red); color: var(--white); }
+.btn.is-yellow { background: var(--yellow); }
+.btn.is-ink { background: #45455f; color: var(--white); }
+.btn.is-small { height: 32px; border-width: 2px; border-radius: 16px; box-shadow: var(--shadow); font-family: var(--font-body); font-weight: 700; font-size: 12px; }
