@@ -12,12 +12,13 @@ type Env = {
 
 const Guess = z.object({
   is_food: z.boolean().describe('写真に食べ物や飲み物が写っているか'),
-  name: z.string().describe('料理名。日本語で短く（例：牛丼、しょうゆラーメン、カフェラテ）。食べ物でなければ空'),
+  name: z.string().describe('料理名。日本語で10文字以内の短い一般的な名前（例：牛丼、塩ラーメン、モーニングセット）。食べ物でなければ空'),
   kcal: z.number().int().describe('写っている1人前のおおよそのカロリー（kcal）。食べ物でなければ0'),
 })
 
 const SYSTEM = `あなたは食事の写真を見て、料理名とカロリーの目安を答えます。
 - 写っている量を1人前として、よくある日本の外食・市販品の値を目安に、10kcal単位で答えてください。
+- 料理名はカードに書くので、10文字以内の短い一般的な名前にしてください（商品名の長い正式名称は使わない）。
 - 複数の料理が写っているときは、まとめて1つの名前（例：「からあげ定食」）と合計カロリーにしてください。
 - 食べ物や飲み物が写っていないときは is_food を false にしてください。`
 
@@ -68,7 +69,7 @@ export default {
       if (res.stop_reason === 'refusal' || !out) return json({ error: 'no_answer' }, 502)
       if (!out.is_food) return json({ food: false })
       const kcal = Math.max(0, Math.min(3000, Math.round(out.kcal / 10) * 10))
-      return json({ food: true, name: out.name.slice(0, 20), kcal })
+      return json({ food: true, name: out.name.slice(0, 14), kcal })
     } catch (e) {
       if (e instanceof Anthropic.RateLimitError) return json({ error: 'busy' }, 429)
       if (e instanceof Anthropic.APIError) return json({ error: 'api', status: e.status }, 502)
