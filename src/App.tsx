@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { Card } from './game/types.ts'
 import Start from './screens/Start.tsx'
 import Entry from './screens/Entry.tsx'
 import Lobby from './screens/Lobby.tsx'
@@ -79,6 +80,8 @@ export default function App() {
 function InRoom({ room, online, onLeave, onError }: { room: Room; online: boolean; onLeave: () => void; onError: (m: string) => void }) {
   const { state, photos, status, message } = useRoom(room)
   const [editPhotos, setEditPhotos] = useState(false)
+  // 写真の画面を「戻る」で閉じても、選びかけの写真をとっておく
+  const [draft, setDraft] = useState<Card[] | null>(null)
   const me = state?.players.find((p) => p.id === room.me)
 
   // 部屋に入ったら、まず写真を選ぶ（まだなら）
@@ -104,10 +107,14 @@ function InRoom({ room, online, onLeave, onError }: { room: Room; online: boolea
     if (editPhotos)
       return (
         <Photos
-          initial={me.photos}
+          initial={draft ?? me.photos}
           photos={photos}
-          onBack={() => setEditPhotos(false)}
+          onBack={(cards) => {
+            setDraft(cards)
+            setEditPhotos(false)
+          }}
           onDone={(cards) => {
+            setDraft(null)
             room.dispatch({ type: 'setPhotos', photos: cards })
             room.dispatch({ type: 'setReady', ready: true })
             setEditPhotos(false)

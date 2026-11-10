@@ -17,7 +17,7 @@ const MAX_PHOTOS = 10
 type Props = {
   initial: CardData[]
   photos: PhotoMap
-  onBack: () => void
+  onBack: (cards: CardData[]) => void
   onDone: (cards: CardData[]) => void
 }
 
@@ -84,7 +84,7 @@ export default function Photos({ initial, photos, onBack, onDone }: Props) {
 
   return (
     <main className="photos">
-      <Header title="カードをつくる" onBack={onBack} />
+      <Header title="カードをつくる" onBack={() => onBack(cards)} />
       <div className="photos__body">
         <p className="photos__lead label">山札に入れる写真を えらんでね</p>
         <button className="photos__pick sticker pop" onClick={() => fileRef.current?.click()} disabled={cards.length >= MAX_PHOTOS}>
