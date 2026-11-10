@@ -8,5 +8,5 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 # この場所から開いたページだけ使える（カンマ区切り）
 ALLOWED_ORIGINS = "https://naarata049-maker.github.io,http://127.0.0.1:5173,http://localhost:5173"
-# 使うモデル。くわしく見てほしいときは claude-opus-5-5 に変える
-MODEL = "claude-haiku-5-5"
+# 使うモデル（林さんの希望で Opus 5.5。安くしたいときは claude-haiku-5-5）
+MODEL = "claude-opus-5-5"

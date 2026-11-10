@@ -5,7 +5,7 @@ Calojack のページは GitHub Pages（だれでも中身が見える）なの�
 
 - 受けつけるのは `ALLOWED_ORIGINS` に書いた場所から開いたページだけ
 - 写真は 360px に縮めたものだけ（大きいものははねる）
-- モデルは `MODEL`（はじめは claude-haiku-5-5。1枚 0.01〜0.02円くらい）
+- モデルは `MODEL`（claude-opus-5-5。1枚 1円前後。安くするなら claude-haiku-5-5）
 
 ## 公開のしかた（Cloudflare の画面だけでできる）
 
