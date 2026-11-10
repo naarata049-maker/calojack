@@ -82,6 +82,10 @@ export type GameState = {
   revealed: HandCard[]
   /** ゲームの始めのチップ（07の「10枚 → 18枚」用） */
   firstChips: Record<string, number>
+  /** 引くか、やめるかを選んでいる人（1人ずつ順番） */
+  turn: string | null
+  /** ひとつ前の人がしたこと */
+  lastAction: { playerId: string; type: 'draw' | 'double' | 'stand'; card?: HandCard } | null
 }
 
 export type Action =

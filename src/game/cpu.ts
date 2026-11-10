@@ -19,7 +19,7 @@ export function decideCpu(s: GameState, cpuId: string): Action | null {
     return { type: 'bet', amount: Math.max(1, Math.min(maxBet(p), amount)) }
   }
 
-  if (s.phase === 'playing' && p.status === 'playing') {
+  if (s.phase === 'playing' && p.status === 'playing' && s.turn === p.id) {
     const room = s.settings.target - estimate(p.hand)
     if (canDouble(p) && room > 500 && room < 800 && Math.random() < 0.5) return { type: 'double' }
     if (room > 600) return { type: 'draw' }

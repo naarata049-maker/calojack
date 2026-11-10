@@ -15,8 +15,11 @@ export default function Table({ room, state, photos }: Props) {
   const me = state.players.find((p) => p.id === room.me)!
   const others = state.players.filter((p) => p.id !== room.me)
   const opened = state.phase === 'result'
-  const shownTotal = opened ? handTotal(me.hand) : visibleTotal(me.hand)
-  const hasHidden = !opened && me.hand.some((c) => c.hidden)
+  // 相手が選んでいるときは、テーブルの真ん中をその人の手札に切りかえる
+  const turnPlayer = state.phase === 'playing' ? state.players.find((p) => p.id === state.turn) : undefined
+  const viewing = turnPlayer && turnPlayer.id !== me.id ? turnPlayer : me
+  const shownTotal = opened ? handTotal(viewing.hand) : visibleTotal(viewing.hand)
+  const hasHidden = !opened && viewing.hand.some((c) => c.hidden)
 
   return (
     <main className={`table is-${state.phase}`}>
@@ -36,7 +39,7 @@ export default function Table({ room, state, photos }: Props) {
       <section className="table__felt">
         <div className={`table__others is-${others.length}`}>
           {others.map((p) => (
-            <Opponent key={p.id} p={p} state={state} />
+            <Opponent key={p.id} p={p} state={state} active={state.phase === 'playing' && state.turn === p.id} />
           ))}
         </div>
 
@@ -51,7 +54,13 @@ export default function Table({ room, state, photos }: Props) {
           </div>
         )}
 
-        <Hand hand={me.hand} opened={opened} photos={photos} />
+        {viewing !== me && (
+          <p className="table__whose label">
+            <span className="table__whose-dot" style={{ background: viewing.color }} />
+            {viewing.name}の手札
+          </p>
+        )}
+        <Hand key={viewing.id} hand={viewing.hand} opened={opened} photos={photos} />
 
         <div className="table__sum sticker">
           <span className="table__sum-label">{opened ? '合計' : '見えている合計'}</span>
@@ -61,37 +70,44 @@ export default function Table({ room, state, photos }: Props) {
             <small>kcal</small>
             {hasHidden && <span className="table__sum-q">＋？</span>}
           </span>
-          {me.bet > 0 && (
+          {viewing.bet > 0 && (
             <span className="table__sum-bet pop">
-              <Chip size={20} /> {me.bet}
+              <Chip size={20} /> {viewing.bet}
             </span>
           )}
         </div>
       </section>
 
       {state.phase === 'betting' && <BetControls room={room} state={state} me={me} />}
-      {state.phase === 'playing' && <PlayControls room={room} me={me} />}
+      {state.phase === 'playing' &&
+        (turnPlayer && turnPlayer.id !== me.id ? (
+          <OtherTurn state={state} turnPlayer={turnPlayer} me={me} />
+        ) : (
+          <PlayControls room={room} me={me} state={state} />
+        ))}
       {state.phase === 'result' && <RoundResult room={room} state={state} />}
     </main>
   )
 }
 
-function Opponent({ p, state }: { p: Player; state: GameState }) {
+function Opponent({ p, state, active }: { p: Player; state: GameState; active: boolean }) {
   let status = '考え中…'
   let yellow = false
   if (state.phase === 'betting' && p.status === 'bet') {
     status = `${p.bet}枚 賭けた`
     yellow = true
   } else if (state.phase === 'playing') {
-    if (p.status === 'stood') status = p.doubled ? 'ダブルダウン' : 'やめた'
+    if (active) status = '選択中…'
+    else if (p.status === 'stood') status = p.doubled ? 'ダブルダウン' : 'やめた'
     else if (p.draws > 0) status = `${p.draws}枚 引いた`
-    yellow = p.status === 'stood' || p.draws > 0
+    else status = '順番待ち'
+    yellow = active || p.status === 'stood' || p.draws > 0
   } else if (state.phase === 'result') {
     const total = handTotal(p.hand)
     status = `${total < 0 ? '−' : ''}${formatKcal(total)}kcal`
   }
   return (
-    <div className="opp sticker">
+    <div className={`opp sticker ${active ? 'is-active' : ''}`}>
       <span className="opp__avatar" style={{ background: p.color }} />
       <div className="opp__info">
         <p className="opp__name label">
@@ -196,13 +212,40 @@ function BetControls({ room, state, me }: { room: Room; state: GameState; me: Pl
   )
 }
 
-function PlayControls({ room, me }: { room: Room; me: Player }) {
+/** ひとつ前の人がしたことを短く */
+function lastText(state: GameState, me: Player) {
+  const a = state.lastAction
+  if (!a) return ''
+  const who = a.playerId === me.id ? 'あなた' : state.players.find((p) => p.id === a.playerId)?.name ?? ''
+  const card = a.card ? `「${a.card.name}」` : ''
+  if (a.type === 'draw') return `${who}が${card}を引いた`
+  if (a.type === 'double') return `${who}がダブルダウンで${card}を引いた`
+  return `${who}がやめた`
+}
+
+/** 相手の番のとき：「○○のターン」と「選択中…」 */
+function OtherTurn({ state, turnPlayer, me }: { state: GameState; turnPlayer: Player; me: Player }) {
+  return (
+    <div className="controls is-waiting">
+      <p className="controls__last">{lastText(state, me)}</p>
+      <p className="controls__title pop">{turnPlayer.name}のターン</p>
+      <p className="controls__choosing label">
+        選択中<span className="dots"><i>.</i><i>.</i><i>.</i></span>
+      </p>
+      <p className="controls__wait">
+        {me.status === 'stood' ? (me.doubled ? 'あなたはダブルダウンしました' : 'あなたはやめました') : 'あなたの番を待っています'}
+      </p>
+    </div>
+  )
+}
+
+function PlayControls({ room, me, state }: { room: Room; me: Player; state: GameState }) {
   const [help, setHelp] = useState(false)
   if (me.status !== 'playing') {
     return (
-      <div className="controls">
+      <div className="controls is-waiting">
         <p className="controls__title pop">{me.doubled ? 'ダブルダウン！' : 'やめた！'}</p>
-        <p className="controls__wait">みんながやめるのを待っています。全員そろったら一斉にめくります</p>
+        <p className="controls__wait">全員がやめたら、一斉にめくります</p>
       </div>
     )
   }
@@ -211,6 +254,7 @@ function PlayControls({ room, me }: { room: Room; me: Player }) {
   const doubleOk = canDouble(me)
   return (
     <div className="controls">
+      <p className="controls__last">{lastText(state, me)}</p>
       <p className="controls__title pop">あなたのターン</p>
       <div className="play__row">
         <button className={`btn play__draw ${showDouble ? '' : 'is-wide'}`} disabled={full} onClick={() => room.dispatch({ type: 'draw' })}>

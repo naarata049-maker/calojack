@@ -33,6 +33,8 @@ export function createGame(code: string, host: { id: string; name: string }): Ga
     results: [],
     revealed: [],
     firstChips: {},
+    turn: null,
+    lastAction: null,
   }
 }
 
@@ -158,32 +160,38 @@ export function apply(state: GameState, playerId: string, action: Action, ctx: C
       if (s.players.every((p) => p.status === 'bet')) {
         s.phase = 'playing'
         s.players.forEach((p) => (p.status = 'playing'))
+        // 1人ずつ順番に。ラウンドごとに最初の人をずらす
+        s.turn = s.players[(s.round - 1) % s.players.length].id
+        s.lastAction = null
       }
       return s
     }
     case 'draw': {
-      if (!me || s.phase !== 'playing' || me.status !== 'playing') return state
+      if (!me || s.phase !== 'playing' || me.status !== 'playing' || s.turn !== me.id) return state
       if (me.hand.length >= MAX_HAND) return state
       drawCard(s, me, rand)
       me.draws += 1
       if (me.hand.length >= MAX_HAND) me.status = 'stood'
-      return finishIfAllStood(s)
+      s.lastAction = { playerId: me.id, type: 'draw', card: me.hand[me.hand.length - 1] }
+      return nextTurn(s)
     }
     case 'double': {
       // 賭けたチップを2倍にして、1枚だけ引く
-      if (!me || s.phase !== 'playing' || !canDouble(me)) return state
+      if (!me || s.phase !== 'playing' || !canDouble(me) || s.turn !== me.id) return state
       me.chips -= me.bet
       me.bet *= 2
       me.doubled = true
       drawCard(s, me, rand)
       me.draws += 1
       me.status = 'stood'
-      return finishIfAllStood(s)
+      s.lastAction = { playerId: me.id, type: 'double', card: me.hand[me.hand.length - 1] }
+      return nextTurn(s)
     }
     case 'stand': {
-      if (!me || s.phase !== 'playing' || me.status !== 'playing') return state
+      if (!me || s.phase !== 'playing' || me.status !== 'playing' || s.turn !== me.id) return state
       me.status = 'stood'
-      return finishIfAllStood(s)
+      s.lastAction = { playerId: me.id, type: 'stand' }
+      return nextTurn(s)
     }
     case 'nextRound': {
       if (!isHost || s.phase !== 'result') return state
@@ -237,6 +245,8 @@ function startRound(s: GameState, _ctx: Context, rand: () => number) {
   s.round += 1
   s.phase = 'betting'
   s.results = []
+  s.turn = null
+  s.lastAction = null
   s.deck = shuffle(s.deck.concat(s.players.flatMap((p) => p.hand.map(stripHidden))), rand)
   s.players.forEach((p) => {
     p.hand = []
@@ -260,8 +270,18 @@ function drawCard(s: GameState, p: Player, rand: () => number) {
   p.hand.push({ ...card, hidden: rand() < HIDDEN_RATE })
 }
 
-function finishIfAllStood(s: GameState) {
-  if (!s.players.every((p) => p.status === 'stood')) return s
+/** 次の人の番へ（やめた人は飛ばす）。全員やめたら一斉にめくる */
+function nextTurn(s: GameState) {
+  const n = s.players.length
+  const from = s.players.findIndex((p) => p.id === s.turn)
+  for (let k = 1; k <= n; k++) {
+    const p = s.players[(from + k) % n]
+    if (p.status === 'playing') {
+      s.turn = p.id
+      return s
+    }
+  }
+  s.turn = null
   settle(s)
   return s
 }

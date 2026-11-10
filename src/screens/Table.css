@@ -511,3 +511,57 @@
   .table__open { margin-top: 8px; }
   .table__open-title { font-size: 20px; }
 }
+
+/* 1人ずつの順番 */
+.opp.is-active {
+  outline: 3px solid var(--red);
+  outline-offset: 1px;
+}
+.table__whose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 74px 0 0;
+  font-size: 11px;
+}
+.table__whose-dot {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+.controls.is-waiting {
+  justify-content: center;
+  min-height: 186px;
+}
+.controls__last {
+  min-height: 16px;
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--gray-1);
+  text-align: center;
+}
+.controls__choosing {
+  margin: 10px 0 0;
+  padding: 4px 18px;
+  border: var(--line);
+  border-radius: 14px;
+  background: var(--yellow);
+  font-size: 13px;
+}
+.dots i {
+  font-style: normal;
+  animation: blink 1.2s infinite;
+}
+.dots i:nth-child(2) { animation-delay: 0.2s; }
+.dots i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink {
+  0%, 60%, 100% { opacity: 0.2; }
+  30% { opacity: 1; }
+}
+@media (max-height: 720px) {
+  .controls.is-waiting { min-height: 160px; }
+  .controls__last { margin-bottom: 2px; }
+}
