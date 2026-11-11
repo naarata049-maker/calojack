@@ -163,21 +163,24 @@ export function apply(state: GameState, playerId: string, action: Action, ctx: C
         // 1人ずつ順番に。ラウンドごとに最初の人をずらす
         s.turn = s.players[(s.round - 1) % s.players.length].id
         s.lastAction = null
+  s.showing = false
       }
       return s
     }
     case 'draw': {
-      if (!me || s.phase !== 'playing' || me.status !== 'playing' || s.turn !== me.id) return state
+      if (!me || s.phase !== 'playing' || me.status !== 'playing' || s.turn !== me.id || s.showing) return state
       if (me.hand.length >= MAX_HAND) return state
       drawCard(s, me, rand)
       me.draws += 1
       if (me.hand.length >= MAX_HAND) me.status = 'stood'
       s.lastAction = { playerId: me.id, type: 'draw', card: me.hand[me.hand.length - 1] }
-      return nextTurn(s)
+      // すぐ次の人にせず、引いたカードを少し見せる（親が advance で次へ）
+      s.showing = true
+      return s
     }
     case 'double': {
       // 賭けたチップを2倍にして、1枚だけ引く
-      if (!me || s.phase !== 'playing' || !canDouble(me) || s.turn !== me.id) return state
+      if (!me || s.phase !== 'playing' || !canDouble(me) || s.turn !== me.id || s.showing) return state
       me.chips -= me.bet
       me.bet *= 2
       me.doubled = true
@@ -185,10 +188,16 @@ export function apply(state: GameState, playerId: string, action: Action, ctx: C
       me.draws += 1
       me.status = 'stood'
       s.lastAction = { playerId: me.id, type: 'double', card: me.hand[me.hand.length - 1] }
+      s.showing = true
+      return s
+    }
+    case 'advance': {
+      if (!isHost || s.phase !== 'playing' || !s.showing) return state
+      s.showing = false
       return nextTurn(s)
     }
     case 'stand': {
-      if (!me || s.phase !== 'playing' || me.status !== 'playing' || s.turn !== me.id) return state
+      if (!me || s.phase !== 'playing' || me.status !== 'playing' || s.turn !== me.id || s.showing) return state
       me.status = 'stood'
       s.lastAction = { playerId: me.id, type: 'stand' }
       return nextTurn(s)

@@ -29,7 +29,7 @@ export default function Table({ room, state, photos }: Props) {
   const tips =
     state.phase === 'betting' && me.status === 'betting'
       ? betTips()
-      : state.phase === 'playing' && state.turn === me.id && me.status === 'playing'
+      : state.phase === 'playing' && state.turn === me.id && me.status === 'playing' && !state.showing
         ? turnTips(state.settings.target)
         : null
 
@@ -79,7 +79,7 @@ export default function Table({ room, state, photos }: Props) {
             {viewing.name}の手札
           </p>
         )}
-        <Hand key={viewing.id} hand={viewing.hand} opened={opened} photos={photos} />
+        <Hand key={viewing.id} hand={viewing.hand} opened={opened} photos={photos} fresh={state.showing ? state.lastAction?.card?.id : undefined} />
 
         <div className="table__sum sticker">
           <span className="table__sum-label">{opened ? '合計' : '見えている合計'}</span>
@@ -99,7 +99,9 @@ export default function Table({ room, state, photos }: Props) {
 
       {state.phase === 'betting' && <BetControls room={room} state={state} me={me} />}
       {state.phase === 'playing' &&
-        (turnPlayer && turnPlayer.id !== me.id ? (
+        (state.showing ? (
+          <Drawn state={state} me={me} />
+        ) : turnPlayer && turnPlayer.id !== me.id ? (
           <OtherTurn state={state} turnPlayer={turnPlayer} me={me} />
         ) : (
           <PlayControls room={room} me={me} state={state} />
@@ -207,7 +209,7 @@ function PeekSheet({ p, state, photos, onClose }: { p: Player; state: GameState;
 }
 
 /** 自分の手札。枚数で大きさと並べ方を変える（2枚は大きく、6枚以上は2段） */
-function Hand({ hand, opened, photos }: { hand: HandCard[]; opened: boolean; photos: Photos }) {
+function Hand({ hand, opened, photos, fresh }: { hand: HandCard[]; opened: boolean; photos: Photos; fresh?: string }) {
   // 置ける場所の大きさを測って、はみ出さない一番大きい幅にする（スマホの高さが低くても1画面に収める）
   const ref = useRef<HTMLDivElement>(null)
   const [box, setBox] = useState({ w: 300, h: 260 })
@@ -234,7 +236,7 @@ function Hand({ hand, opened, photos }: { hand: HandCard[]; opened: boolean; pho
           {row.map((c) => {
             const i = k++
             return (
-              <div className="hand__card" key={c.id}>
+              <div className={`hand__card ${c.id === fresh ? 'is-new' : ''}`} key={c.id}>
                 <Card card={c} width={width} tilt={tilts[i % tilts.length]} opened={opened} photos={photos} />
               </div>
             )
@@ -298,6 +300,21 @@ function lastText(state: GameState, me: Player) {
   if (a.type === 'draw') return `${who}が${card}を引いた`
   if (a.type === 'double') return `${who}がダブルダウンで${card}を引いた`
   return `${who}がやめた`
+}
+
+/** カードを引いた直後：引いたカードをみんなに見せてから次の人の番へ */
+function Drawn({ state, me }: { state: GameState; me: Player }) {
+  const a = state.lastAction
+  if (!a) return null
+  const mine = a.playerId === me.id
+  const who = mine ? 'あなた' : state.players.find((p) => p.id === a.playerId)?.name ?? ''
+  return (
+    <div className="controls is-waiting is-drawn">
+      <p className="controls__last">{a.type === 'double' ? `${who}がダブルダウン！` : `${who}が1枚引いた`}</p>
+      <p className="controls__title pop">「{a.card?.name}」を引いた！</p>
+      <p className="controls__wait">{a.card?.hidden ? '？のカードなので、数字は最後にわかります' : 'つぎの人の番へ…'}</p>
+    </div>
+  )
 }
 
 /** 相手の番のとき：「○○のターン」と「選択中…」 */

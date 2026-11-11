@@ -86,6 +86,8 @@ export type GameState = {
   turn: string | null
   /** ひとつ前の人がしたこと */
   lastAction: { playerId: string; type: 'draw' | 'double' | 'stand'; card?: HandCard } | null
+  /** 引いたカードをみんなに見せている間（このあと親が次の人の番にする） */
+  showing?: boolean
 }
 
 export type Action =
@@ -101,5 +103,7 @@ export type Action =
   | { type: 'draw' }
   | { type: 'double' }
   | { type: 'stand' }
+  /** 引いたカードを見せ終わって、次の人の番へ（親だけ） */
+  | { type: 'advance' }
   | { type: 'nextRound' }
   | { type: 'playAgain' }

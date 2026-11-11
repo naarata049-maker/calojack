@@ -31,6 +31,8 @@ export interface Room {
 }
 
 const PREFIX = 'calojack-v1-'
+/** 引いたカードをみんなに見せる時間 */
+const SHOW_MS = 1800
 const env = import.meta.env
 
 function peerOptions() {
@@ -115,6 +117,7 @@ export class HostRoom extends BaseRoom {
   private peer: Peer | null = null
   private conns = new Map<string, DataConnection>()
   private cpuTimers = new Map<string, number>()
+  private showTimer: number | null = null
   private closed = false
 
   constructor(me: string, name: string, options: { online: boolean }) {
@@ -204,6 +207,16 @@ export class HostRoom extends BaseRoom {
     if (newPhotos) this.sendAll({ t: 'photos', photos: this.photos })
     this.broadcast()
     this.scheduleCpus()
+    this.scheduleAdvance()
+  }
+
+  /** 引いたカードを見せる時間がたったら、次の人の番へ */
+  private scheduleAdvance() {
+    if (!this.state?.showing || this.showTimer !== null) return
+    this.showTimer = window.setTimeout(() => {
+      this.showTimer = null
+      if (!this.closed) this.run(this.state!.hostId, { type: 'advance' })
+    }, SHOW_MS)
   }
 
   private sendAll(msg: Msg) {
@@ -239,6 +252,7 @@ export class HostRoom extends BaseRoom {
   close() {
     this.closed = true
     this.cpuTimers.forEach((t) => clearTimeout(t))
+    if (this.showTimer !== null) clearTimeout(this.showTimer)
     this.conns.forEach((c) => c.close())
     this.peer?.destroy()
     this.status = 'closed'

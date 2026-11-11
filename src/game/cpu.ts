@@ -7,7 +7,7 @@ const GUESS = { food: 450, exercise: 200 }
 
 export function decideCpu(s: GameState, cpuId: string): Action | null {
   const p = s.players.find((x) => x.id === cpuId)
-  if (!p || !p.isCpu) return null
+  if (!p || !p.isCpu || s.showing) return null
 
   if (s.phase === 'betting' && p.status === 'betting') {
     // 2枚を見て、よさそうなら多めに賭ける

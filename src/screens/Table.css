@@ -219,6 +219,31 @@
 .table.is-result .hand__card {
   animation: none;
 }
+/* いま引いたカード：山札から飛んできて、少し大きくはねてから「引いた！」の札 */
+.hand__card.is-new {
+  position: relative;
+  z-index: 2;
+  animation: deal 0.45s both, drawn 0.5s 0.45s both;
+}
+.hand__card.is-new::after {
+  content: '引いた！';
+  position: absolute;
+  left: 50%;
+  top: -12px;
+  translate: -50% 0;
+  padding: 2px 10px;
+  border: var(--line);
+  border-radius: 12px;
+  background: var(--yellow);
+  box-shadow: 1px 2px 0 var(--ink);
+  font-family: var(--font-label);
+  font-size: 11px;
+  white-space: nowrap;
+  animation: pop 0.3s 0.5s both;
+}
+@keyframes drawn {
+  50% { transform: scale(1.12); }
+}
 
 .table__sum {
   display: flex;
